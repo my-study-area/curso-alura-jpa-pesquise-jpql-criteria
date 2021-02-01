@@ -1,0 +1,14 @@
+version: "3.5"
+
+services:
+  db:
+    container_name: database
+    image: mariadb:10.4
+    ports:
+      - "3306:3306"
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: alura_jpa
+      MYSQL_USER: adriano
+      MYSQL_PASSWORD: adriano
