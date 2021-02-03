@@ -133,3 +133,24 @@ Movimentacoes: [br.com.alura.jpa.modelo.Movimentacao@5bdd5689, br.com.alura.jpa.
 - para evitar o `N+1` devemos utilizar o `join` no JPQL. Ex: `select from Conta c join fetch c.movimentacoes` ou `select distinct c from Conta c left join fetch c.movimentacoes` para recebermos até as contas que não possuem movimentações.
 - utilizamos `distinct` no JPQL para trazermos somentes os dados não repetidos. Ex: `select distinct c from Conta c left join fetch c.movimentacoes`
 - o `N+1` é uma consequência de relacionamentos *toMany e não é um problema exclusivo do JPA,podendo ocorrer no JDBC também.
+
+**Aula 03 - Funções da agregação e Group By**
+
+Inserções de registros utilizados na aula:
+```sql
+insert into Movimentacao (data, valor, conta_id, descricao, tipoMovimentacao) values ('2017-01-12 18:01:07', 80.0, 2, 'Restaurante', 'SAIDA');
+insert into Movimentacao (data, valor, conta_id, descricao, tipoMovimentacao) values ('2017-01-12 19:31:12', 100.0, 2, 'Cinema', 'SAIDA');
+insert into Movimentacao (data, valor, conta_id, descricao, tipoMovimentacao) values ('2017-01-13 10:01:54', 40.0, 2, 'Café da manhã', 'SAIDA');
+insert into Movimentacao (data, valor, conta_id, descricao, tipoMovimentacao) values ('2017-01-14 15:20:13', 20.0, 2, 'Lanche', 'SAIDA');
+```
+- JPQL possui os tipico funções de agregação do mundo SQL. Ex: `SUM, AVG, MIN, MAX ou COUNT`
+- utilizamos `sum(valor)` na JPQL para realizar soma. Ex: `select sum(m.valor) from Movimentacao m`
+- utilizamos `avg(valor)` na JPQL para realizar média. Ex: `select avg(m.valor) from Movimentacao m`
+- Na JPQL podemos usar, por exemplo, `select new br.com.alura.jpa.modelo.MediaComData(avg(m.valor), day(m.data), month(m.data)) from Movimentacao m group by day(m.data), month(m.data), year(m.data)` para retornarmos um tipo específico
+
+Exemplo de uso de Native Query:
+```java
+Query sqlQuery = em.createNativeQuery("SELECT * FROM Movimentacao WHERE conta_id = :id", Movimentacao.class);
+sqlQuery.setParameter("id", 2L);
+List<Movimentacao> movimentacoes = sqlQuery.getResultList(); 
+```
