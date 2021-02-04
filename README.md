@@ -154,3 +154,11 @@ Query sqlQuery = em.createNativeQuery("SELECT * FROM Movimentacao WHERE conta_id
 sqlQuery.setParameter("id", 2L);
 List<Movimentacao> movimentacoes = sqlQuery.getResultList(); 
 ```
+
+**Aula 04 - Camada de persistência**
+
+- Mesmo com JPA faz sentido usar um DAO para encapsular as queries
+- Em algumas bibliotecas, como o Spring Data, chamam os DAO de repositórios
+- O DAO deve receber o EntityManager como dependência (preferencialmente - pelo construtor)
+- NamedQuery é uma forma de associar a entidade com suas queries
+- NamedQuery tem uma vantagem pois é analisada ao criar o EntityManager
