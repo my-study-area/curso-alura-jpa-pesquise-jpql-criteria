@@ -2,6 +2,10 @@ package br.com.alura.jpa.testes;
 
 import java.math.BigDecimal;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
 import br.com.alura.jpa.modelo.dao.MovimentacaoDao;
 
 public class TesteSomaEMediaDasMovimentacoes {
@@ -20,7 +24,9 @@ public class TesteSomaEMediaDasMovimentacoes {
 //		TypedQuery<Double> queryMedia = em.createQuery(jpqlMedia, Double.class);
 //		Double mediaDoValorDasMovimentacoes = queryMedia.getSingleResult();
 		
-		MovimentacaoDao dao = new MovimentacaoDao();
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("alura");
+		EntityManager em = emf.createEntityManager();
+		MovimentacaoDao dao = new MovimentacaoDao(em);
 		BigDecimal somaDoValorDasMovimentacoes = dao.getSomaDasMovimentacoes();
 		Double mediaDoValorDasMovimentacoes = dao.getMediaDasMovimentacoes();
 		
