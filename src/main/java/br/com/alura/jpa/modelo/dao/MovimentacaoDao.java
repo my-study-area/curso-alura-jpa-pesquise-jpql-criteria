@@ -1,10 +1,16 @@
 package br.com.alura.jpa.modelo.dao;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import br.com.alura.jpa.modelo.MediaComData;
 import br.com.alura.jpa.modelo.Movimentacao;
@@ -37,6 +43,9 @@ public class MovimentacaoDao {
 	}
 	
 	public List<Movimentacao> getMovimentacaoFiltradaPorData(Integer dia, Integer mes, Integer ano) {
+		/* Exemplo sem o uso de CriteriaQuery
+		 * 
+		 * 
 		String jpql = "selec m from Movimentacao m ";
 		
 		if (dia != null ) {
@@ -52,6 +61,38 @@ public class MovimentacaoDao {
 		}
 		TypedQuery<Movimentacao> query = em.createQuery(jpql, Movimentacao.class);
 		return query.getResultList();
+		*/
+		
+		CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<Movimentacao> query = builder.createQuery(Movimentacao.class);
+		Root<Movimentacao> root = query.from(Movimentacao.class);
+		List<Predicate> predicates = new ArrayList<>();
+		
+		if (dia != null ) {
+			//day(m.data)
+			Expression<Integer> expression = builder.function("day", Integer.class, root.get("data"));
+			Predicate predicate = builder.equal(expression, dia);
+			predicates.add(predicate);
+		}
+		
+		if (mes != null ) {
+			//month(m.data)
+			Expression<Integer> expression = builder.function("month", Integer.class, root.get("data"));
+			Predicate predicate = builder.equal(expression, mes);
+			predicates.add(predicate);
+		}
+		
+		if (ano != null ) {
+			//year(m.data)
+			Expression<Integer> expression = builder.function("year", Integer.class, root.get("data"));
+			Predicate predicate = builder.equal(expression, ano);
+			predicates.add(predicate);
+		}
+		
+		query.where(predicates.toArray(new Predicate[0]));
+		TypedQuery<Movimentacao> typedQuery = em.createQuery(query);
+		
+		return typedQuery.getResultList();
 	}
 
 }
