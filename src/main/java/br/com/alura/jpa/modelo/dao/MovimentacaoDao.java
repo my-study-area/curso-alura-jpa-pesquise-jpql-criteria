@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import br.com.alura.jpa.modelo.MediaComData;
+import br.com.alura.jpa.modelo.Movimentacao;
 
 public class MovimentacaoDao {
 	
@@ -33,6 +34,24 @@ public class MovimentacaoDao {
 //		String jpqlMedia = "select avg(m.valor) from Movimentacao m";
 		TypedQuery<Double> queryMedia = em.createNamedQuery("mediaDoValorDasMovimentacoes", Double.class);
 		return  queryMedia.getSingleResult();
+	}
+	
+	public List<Movimentacao> getMovimentacaoFiltradaPorData(Integer dia, Integer mes, Integer ano) {
+		String jpql = "selec m from Movimentacao m ";
+		
+		if (dia != null ) {
+			jpql += "where day(m.data) ";
+		}
+		
+		if (mes != null ) {
+			jpql += "and month(m.data) ";
+		}
+		
+		if (ano != null ) {
+			jpql += "and year(m.data)";
+		}
+		TypedQuery<Movimentacao> query = em.createQuery(jpql, Movimentacao.class);
+		return query.getResultList();
 	}
 
 }
