@@ -162,3 +162,52 @@ List<Movimentacao> movimentacoes = sqlQuery.getResultList();
 - O DAO deve receber o EntityManager como dependência (preferencialmente - pelo construtor)
 - NamedQuery é uma forma de associar a entidade com suas queries
 - NamedQuery tem uma vantagem pois é analisada ao criar o EntityManager
+
+**Aula 05 - Queries dinâmicas com Criteria**
+Exemplo de consulta sql que gera desvantagens ao usar JPQL:
+```sql
+select 
+  * 
+from 
+  Movimentacao 
+where 
+  day(data) = "12" 
+    and month(data) = "01" 
+    and year(data) = "2017";
+```
+- JPQL tem dificuldades (problema) ao se trabalhar com consultas com diversas condições para formar a string JPQL:
+```java
+String jpql = "selec m from Movimentacao m ";
+
+if (dia != null ) {
+  jpql += "where day(m.data) ";
+}
+
+if (mes != null ) {
+  jpql += "and month(m.data) ";
+}
+
+if (ano != null ) {
+  jpql += "and year(m.data)";
+}
+```
+- use CriteriaQuery em consultas complexas. Exemplo de uso num exemplo simples (didático):urso-alura-jpa-pesquise-jpql-criteria
+```java
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("alura");
+		EntityManager em = emf.createEntityManager();
+		
+		CriteriaBuilder builder = em.getCriteriaBuilder(); //construtor de critérios
+		CriteriaQuery<BigDecimal> query = builder.createQuery(BigDecimal.class); //query do construtor de critérios
+		Root<Movimentacao> root = query.from(Movimentacao.class); //Root: root das query do construtor de critérios, sempre são entidade
+		Expression<BigDecimal> sum = builder.sum(root.get("valor")); //cria expressão
+		query.select(sum); //associa a expressão na query do construtor de critérios
+		TypedQuery<BigDecimal> typedQuery = em.createQuery(query); //cria a consulta tipada
+		BigDecimal somaDoValorDasMovimentacoes = typedQuery.getSingleResult();
+```
+- as consultas JPQL são mais fáceis de escrever e ler quando a consulta é estática.
+- as consultas com a API de Criteria são superiores na hora de construir consultas dinâmicas.
+- A criteria permite definir queries apenas com chamadas de métodos e assim possui mais flexibilidade quando os parâmetros variam
+os protagonistas da criteria são:
+  - **CriteriaQuery** - a query em si, que possui os métodos principais como `select(..)`, `from(..)` e `where(..)`
+  - **Criteriabuilder** - uma classe auxiliar para definir filtros e projeções
+  - **Root** - para definir os caminhos para atributos. Ex: (m.data)
