@@ -12,6 +12,24 @@
 
 Curso de Java e JPA: Pesquise com JPQL e Criteria
 
+## Começando
+```bash
+#clona o projeto
+git clone https://github.com/my-study-area/curso-alura-jpa-pesquise-jpql-criteria
+
+#entra no diretório
+cd curso-alura-jpa-pesquise-jpql-criteria/
+
+#inicia o container do banco de dados
+docker-compose up -d
+
+#conecta com o banco de dados
+ mysql -u adriano -p -h 0.0.0.0 #senha: adriano
+
+#seleciona o banco de dados
+ use alura_jpa;
+```
+
 ## Anotações
 **Aula 01 - Relacionamentos bidirecionais Ver primeiro vídeo**
 - Num relacionamento biderecional com @OneToMany e @ManyToOne devemos anotar com `@OneToMany(mappedBy = "conta")`
